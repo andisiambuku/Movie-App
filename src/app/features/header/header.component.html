@@ -1,0 +1,97 @@
+<header class="bg-primary shadow-lg">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center py-4">
+      <!-- Logo -->
+      <div class="flex items-center cursor-pointer" (click)="navigateHome()">
+        <svg class="w-8 h-8 text-accent mr-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+        </svg>
+        <h1 class="text-2xl font-bold text-white">MovieHub</h1>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <ng-container *ngIf="isAuthenticated$ | async; else loginButton">
+          <div class="relative">
+            <button
+              (click)="toggleMenu()"
+              class="flex items-center space-x-2 text-white hover:text-accent transition-colors"
+            >
+              <img
+                [src]="(currentUser$ | async)?.picture || '/assets/default-avatar.png'"
+                [alt]="(currentUser$ | async)?.name"
+                class="w-8 h-8 rounded-full"
+              >
+              <span>{{ (currentUser$ | async)?.name }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div
+              *ngIf="isMenuOpen"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10"
+            >
+              <button
+                (click)="logout()"
+                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #loginButton>
+          <button
+            routerLink="/login"
+            class="btn-primary"
+          >
+            Sign In
+          </button>
+        </ng-template>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button
+        (click)="toggleMenu()"
+        class="md:hidden text-white hover:text-accent"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div *ngIf="isMenuOpen" class="md:hidden py-4 border-t border-gray-600">
+      <ng-container *ngIf="isAuthenticated$ | async; else mobileLoginButton">
+        <div class="flex items-center space-x-3 mb-4">
+          <img
+            [src]="(currentUser$ | async)?.picture || '/assets/default-avatar.png'"
+            [alt]="(currentUser$ | async)?.name"
+            class="w-10 h-10 rounded-full"
+          >
+          <span class="text-white">{{ (currentUser$ | async)?.name }}</span>
+        </div>
+        <button
+          (click)="logout()"
+          class="block w-full text-left text-white hover:text-accent py-2"
+        >
+          Sign out
+        </button>
+      </ng-container>
+
+      <ng-template #mobileLoginButton>
+        <button
+          routerLink="/login"
+          (click)="isMenuOpen = false"
+          class="block w-full text-left text-white hover:text-accent py-2"
+        >
+          Sign In
+        </button>
+      </ng-template>
+    </div>
+  </div>
+</header>
