@@ -102,7 +102,7 @@ jobs:
           
       - name: Build for production
         run: |
-          npm run build --configuration production
+          npm run build
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           
