@@ -41,6 +41,4 @@ testem.log
 .DS_Store
 Thumbs.db
 
-.github/
-src/app/shared/pipe/
-src/environments
+src/environments/environment.ts
