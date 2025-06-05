@@ -3,11 +3,12 @@ import { Observable } from 'rxjs';
 import { AuthService, User } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { NameFormatterPipe } from "../../shared/pipe/name-formatter.pipe";
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-   imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NameFormatterPipe],
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
@@ -23,13 +24,14 @@ export class HeaderComponent implements OnInit {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
     this.isMenuOpen = false;
   }
+
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
