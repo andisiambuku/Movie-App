@@ -41,4 +41,17 @@ testem.log
 .DS_Store
 Thumbs.db
 
-src/environments/environment.ts
+
+# Environment files with secrets (optional)
+src/environments/environment.development.ts
+
+# Keep the base environment file
+!src/environments/environment.ts
+
+export const environment = {
+  production: false,
+  tmdbApiKey: '1851f58aa80067e59b59132b8d56ad94',
+  tmdbAccessToken: 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxODUxZjU4YWE4MDA2N2U1OWI1OTEzMmI4ZDU2YWQ5NCIsIm5iZiI6MTc0ODMzOTI0My44MzIsInN1YiI6IjY4MzU4YTJiMmQ2MTZiOTBjYWI2YmQ0ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._aerZo2_35PTVqZ9zAyPHz_Ib95EK8qAlZlBRqKEV4I',
+  tmdbBaseUrl: 'https://api.themoviedb.org/3',
+};
+
