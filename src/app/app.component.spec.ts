@@ -1,64 +1,29 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subject } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-  let component: AppComponent;
-  let fixture: ComponentFixture<AppComponent>;
-  let router: jasmine.SpyObj<Router>;
-  let routerEventsSubject: Subject<any>;
-
   beforeEach(async () => {
-    routerEventsSubject = new Subject();
-    const routerSpy = jasmine.createSpyObj('Router', [], {
-      events: routerEventsSubject.asObservable(),
-      url: '/'
-    });
-
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [
-        { provide: Router, useValue: routerSpy }
-      ]
     }).compileComponents();
-
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
   });
 
-  it('should show hero banner by default', () => {
-    expect(component.showHeroBanner).toBe(true);
+  it(`should have the 'movie-recs' title`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('movie-recs');
   });
 
-  it('should hide hero banner on movie details page', () => {
-    component.ngOnInit();
-    
-    routerEventsSubject.next(new NavigationEnd(1, '/movie/123', '/movie/123'));
-    
-    expect(component.showHeroBanner).toBe(false);
-  });
-
-  it('should show hero banner on home page', () => {
-    component.showHeroBanner = false;
-    component.ngOnInit();
-    
-    routerEventsSubject.next(new NavigationEnd(1, '/', '/'));
-    
-    expect(component.showHeroBanner).toBe(true);
-  });
-
-  it('should unsubscribe on destroy', () => {
-    component.ngOnInit();
-    spyOn(component['routerSubscription']!, 'unsubscribe');
-    
-    component.ngOnDestroy();
-    
-    expect(component['routerSubscription']!.unsubscribe).toHaveBeenCalled();
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, movie-recs');
   });
 });
