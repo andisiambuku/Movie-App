@@ -6,6 +6,7 @@
     "start": "ng serve --configuration development",
     "build": "ng build --configuration production",
     "build:dev": "ng build --configuration development",
+    "build:prod": "node replace-env.js && ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
