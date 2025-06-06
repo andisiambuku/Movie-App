@@ -20,7 +20,7 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {
     // Only access localStorage in the browser
     if (isPlatformBrowser(this.platformId)) {
       // Check if user is already logged in

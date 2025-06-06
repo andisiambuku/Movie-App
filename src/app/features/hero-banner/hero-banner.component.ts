@@ -36,11 +36,11 @@ export class HeroBannerComponent implements OnInit, OnDestroy {
   heroMovies: Movie[] = [];
   currentIndex = 0;
   isLoading = true;
-  private intervalId: any;
+  private intervalId:  ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private movieService: MovieService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit() {

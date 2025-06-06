@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Observable, Subject} from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 import { MovieService, Movie, MovieResponse } from '../../../services/movie.service';
 import { StateService } from '../../../services/state.service'

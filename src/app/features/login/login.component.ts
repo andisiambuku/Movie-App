@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
             this.errorMessage = 'Invalid email or password';
           }
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
           this.errorMessage = 'Login failed. Please try again.';
         }

@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  tmdbApiKey: process.env['TMDB_API_KEY'] as string,
+  tmdbApiKey: 'TMDB_API_KEY',
   tmdbBaseUrl: 'https://api.themoviedb.org/3',
 };

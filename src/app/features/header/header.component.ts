@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService, User } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
@@ -11,7 +11,7 @@ import { NameFormatterPipe } from "../../shared/pipe/name-formatter.pipe";
   imports: [CommonModule, RouterModule, NameFormatterPipe],
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   currentUser$: Observable<User | null>;
   isAuthenticated$: Observable<boolean>;
   isMenuOpen = false;
@@ -24,7 +24,6 @@ export class HeaderComponent implements OnInit {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
 
-  ngOnInit(): void { }
 
   logout(): void {
     this.authService.logout();

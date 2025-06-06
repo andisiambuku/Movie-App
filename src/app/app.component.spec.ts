@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let router: jasmine.SpyObj<Router>;
-  let routerEventsSubject: Subject<any>;
-
+  let routerEventsSubject: Subject<Event>;
+  
   beforeEach(async () => {
     routerEventsSubject = new Subject();
     const routerSpy = jasmine.createSpyObj('Router', [], {
@@ -55,10 +56,13 @@ describe('AppComponent', () => {
 
   it('should unsubscribe on destroy', () => {
     component.ngOnInit();
-    spyOn(component['routerSubscription']!, 'unsubscribe');
-    
-    component.ngOnDestroy();
-    
-    expect(component['routerSubscription']!.unsubscribe).toHaveBeenCalled();
+    const subscription = component['routerSubscription'];
+    if (subscription) {
+      spyOn(subscription, 'unsubscribe');
+      
+      component.ngOnDestroy();
+      
+      expect(subscription.unsubscribe).toHaveBeenCalled();
+    }
   });
 });
