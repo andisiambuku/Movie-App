@@ -1,13 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  let router: jasmine.SpyObj<Router>;
-  let routerEventsSubject: Subject<any>;
+  let routerEventsSubject: Subject<Event>;
 
   beforeEach(async () => {
     routerEventsSubject = new Subject();

@@ -16,7 +16,8 @@
   </div>
 
   <!-- Movie Details -->
-  <div *ngIf="!(loading$ | async)" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- <div *ngIf="!(loading$ | async)" class="grid grid-cols-1 lg:grid-cols-3 gap-8"> -->
+  <div *ngIf="(loading$ | async) === false" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Poster -->
     <div class="lg:col-span-1">
       <img
@@ -100,7 +101,8 @@
   </div>
 
   <!-- Cast and Crew -->
-  <div *ngIf="!(loading$ | async)" class="mt-12">
+  <!-- <div *ngIf="!(loading$ | async)" class="mt-12"> -->
+  <div *ngIf="(loading$ | async) === false" class="mt-12">
     <!-- Cast -->
     <div *ngIf="movie.cast?.length" class="mb-8">
       <h2 class="text-2xl font-semibold mb-6">Cast</h2>

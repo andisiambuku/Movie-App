@@ -1,6 +1,6 @@
 // state.service.spec.ts
 import { TestBed } from '@angular/core/testing';
-import { StateService, AppState } from './state.service';
+import { StateService } from './state.service';
 import { Movie, MovieDetails } from './movie.service';
 
 describe('StateService', () => {

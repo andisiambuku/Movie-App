@@ -11,7 +11,7 @@ describe('MovieDetailsComponent', () => {
   let movieService: jasmine.SpyObj<MovieService>;
   let stateService: jasmine.SpyObj<StateService>;
   let router: jasmine.SpyObj<Router>;
-  let activatedRoute: jasmine.SpyObj<ActivatedRoute>;
+ 
 
   const mockMovieDetails: MovieDetails = {
     id: 1,

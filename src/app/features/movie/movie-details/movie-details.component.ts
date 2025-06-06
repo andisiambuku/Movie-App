@@ -5,7 +5,6 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { MovieService, MovieDetails } from '../../../services/movie.service';
 import { StateService } from '../../../services/state.service';
 import { map } from 'rxjs/operators'; 
-import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
 
 @Component({

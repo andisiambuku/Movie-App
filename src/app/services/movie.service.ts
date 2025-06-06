@@ -4,7 +4,6 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
-
 export interface Movie {
   id: number;
   title: string;
@@ -59,6 +58,18 @@ export interface MovieResponse {
   total_results: number;
 }
 
+interface TMDBMovieDetailsResponse extends Movie {
+  genres: Genre[];
+  runtime: number;
+  budget: number;
+  revenue: number;
+  production_companies: ProductionCompany[];
+  credits?: {
+    cast: CastMember[];
+    crew: CrewMember[];
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -67,17 +78,18 @@ export class MovieService {
   private readonly baseUrl = environment.tmdbBaseUrl;
   private readonly imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
-  private cache = new Map<string, any>();
+  private cache = new Map<string, MovieResponse | MovieDetails>();
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  getPopularMovies(page: number = 1): Observable<MovieResponse> {
+  getPopularMovies(page = 1): Observable<MovieResponse> {
     const cacheKey = `popular_${page}`;
     
     if (this.cache.has(cacheKey)) {
-      return of(this.cache.get(cacheKey));
+      const cachedData = this.cache.get(cacheKey) as MovieResponse;
+      return of(cachedData);
     }
 
     this.loadingSubject.next(true);
@@ -99,7 +111,7 @@ export class MovieService {
       );
   }
 
-  searchMovies(query: string, page: number = 1): Observable<MovieResponse> {
+  searchMovies(query: string, page = 1): Observable<MovieResponse> {
     if (!query.trim()) {
       return this.getPopularMovies(page);
     }
@@ -107,7 +119,8 @@ export class MovieService {
     const cacheKey = `search_${query}_${page}`;
     
     if (this.cache.has(cacheKey)) {
-      return of(this.cache.get(cacheKey));
+      const cachedData = this.cache.get(cacheKey) as MovieResponse;
+      return of(cachedData);
     }
 
     this.loadingSubject.next(true);
@@ -134,7 +147,8 @@ export class MovieService {
     const cacheKey = `details_${id}`;
     
     if (this.cache.has(cacheKey)) {
-      return of(this.cache.get(cacheKey));
+      const cachedData = this.cache.get(cacheKey) as MovieDetails;
+      return of(cachedData);
     }
 
     this.loadingSubject.next(true);
@@ -143,7 +157,7 @@ export class MovieService {
       .set('api_key', this.apiKey)
       .set('append_to_response', 'credits');
 
-    return this.http.get<any>(`${this.baseUrl}/movie/${id}`, { params })
+    return this.http.get<TMDBMovieDetailsResponse>(`${this.baseUrl}/movie/${id}`, { params })
       .pipe(
         map(response => ({
           ...response,

@@ -94,7 +94,7 @@ describe('MovieListComponent', () => {
   it('should handle search', fakeAsync(() => {
     component.ngOnInit();
     
-    const event = { target: { value: 'test query' } } as any;
+    const event = { target: { value: 'test query' } } as { target: { value: string } };
     component.onSearch(event);
     
     tick(300); // Wait for debounce
