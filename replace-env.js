@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = './src/environments/environment.prod.ts';
+const path = './src/environments/environment.ts';
 
 // Read the file
 let content = fs.readFileSync(path, 'utf8');
