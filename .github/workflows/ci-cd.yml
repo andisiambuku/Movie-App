@@ -77,65 +77,123 @@ jobs:
           retention-days: 1
 
   # Job 3: Deploy to Vercel Production
-  deploy:
+  deploy-production:
     name: 'Deploy to Production'
     runs-on: ubuntu-latest
     needs: [test-and-lint, build-check]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Build for production
-        run: npm run build
+          
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
+      - name: Debug - Check token availability
+        run: |
+          echo "Checking if VERCEL_TOKEN is available..."
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "❌ VERCEL_TOKEN is empty or not set"
+            exit 1
+          else
+            echo "✅ VERCEL_TOKEN is available"
+          fi
+          
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-
-      - name: Deploy to Vercel (Production)
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          
+      - name: Deploy to Vercel
+        id: deploy
         run: |
-          npm install --global vercel@latest
-          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-          vercel build --token=${{ secrets.VERCEL_TOKEN }}
-          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> $GITHUB_OUTPUT
+          echo "✅ Production deployment: $url"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-
-  preview-deploy:
-    name: 'Preview Deploy'
+  # Job 4: Deploy Preview
+  deploy-preview:
+    name: 'Deploy Preview'
     runs-on: ubuntu-latest
     needs: [test-and-lint, build-check]
-    if: github.ref != 'refs/heads/master' && github.event_name != 'pull_request_target'
-
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/development' && github.event_name == 'push')
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Build for preview
-        run: npm run build
+          
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
+      - name: Debug - Check token availability
+        run: |
+          echo "Checking if VERCEL_TOKEN is available..."
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "❌ VERCEL_TOKEN is empty or not set"
+            exit 1
+          else
+            echo "✅ VERCEL_TOKEN is available"
+          fi
+          
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-
-      - name: Deploy Preview to Vercel using CLI
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          
+      - name: Deploy to Vercel
+        id: deploy
         run: |
-          npm install --global vercel@latest
-          vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-          vercel build --token=${{ secrets.VERCEL_TOKEN }}
-          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> $GITHUB_OUTPUT
+          echo "✅ Preview deployment: $url"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          
+      - name: Comment PR
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Preview deployment ready at: ${{ steps.deploy.outputs.url }}`
+            })
