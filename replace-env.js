@@ -6,7 +6,7 @@ let content = fs.readFileSync(path, 'utf8');
 
 // Replace the placeholder with the actual value
 content = content.replace(
-  /tmdbApiKey: 'TMDB_API_KEY_PLACEHOLDER'/,
+  /tmdbApiKey: 'TMDB_API_KEY'/,
   `tmdbApiKey: '${process.env.TMDB_API_KEY}'`
 );
 
