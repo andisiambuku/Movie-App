@@ -11,7 +11,8 @@ describe('MovieDetailsComponent', () => {
   let movieService: jasmine.SpyObj<MovieService>;
   let stateService: jasmine.SpyObj<StateService>;
   let router: jasmine.SpyObj<Router>;
- 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let activatedRoute: jasmine.SpyObj<ActivatedRoute>;
 
   const mockMovieDetails: MovieDetails = {
     id: 1,
@@ -79,7 +80,7 @@ describe('MovieDetailsComponent', () => {
 
   it('should navigate to home on error', () => {
     spyOn(console, 'error');
-    movieService.getMovieDetails.and.returnValue(throwError('API Error'));
+    movieService.getMovieDetails.and.returnValue(throwError(() => 'API Error'));
 
     component.ngOnInit();
 

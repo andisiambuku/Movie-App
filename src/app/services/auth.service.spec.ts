@@ -8,19 +8,19 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     mockLocalStorage = jasmine.createSpyObj('localStorage', ['getItem', 'setItem', 'removeItem']);
-    
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
         { provide: PLATFORM_ID, useValue: 'browser' }
       ]
     });
-    
+
     // Mock localStorage
     Object.defineProperty(window, 'localStorage', {
       value: mockLocalStorage
     });
-    
+
     service = TestBed.inject(AuthService);
   });
 
@@ -34,15 +34,23 @@ describe('AuthService', () => {
       email: 'test@example.com',
       name: 'Test User'
     };
-    
+
     mockLocalStorage.getItem.and.returnValue(JSON.stringify(savedUser));
-    
-    // Create new service instance to test initialization
-    service = new AuthService('browser');
-    
+
+    // Reset TestBed to create fresh service instance
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: PLATFORM_ID, useValue: 'browser' }
+      ]
+    });
+
+    const testService = TestBed.inject(AuthService);
+
     expect(mockLocalStorage.getItem).toHaveBeenCalledWith('currentUser');
-    expect(service.currentUser).toEqual(savedUser);
-    expect(service.isAuthenticated).toBe(true);
+    expect(testService.currentUser).toEqual(savedUser);
+    expect(testService.isAuthenticated).toBe(true);
   });
 
   it('should login successfully with valid credentials', (done) => {
@@ -72,18 +80,27 @@ describe('AuthService', () => {
   it('should logout successfully', () => {
     // First login
     service.login('test@example.com', 'password').subscribe();
-    
+
     // Then logout
     service.logout();
-    
+
     expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('currentUser');
     expect(service.currentUser).toBeNull();
     expect(service.isAuthenticated).toBe(false);
   });
 
   it('should handle server-side rendering', () => {
-    const ssrService = new AuthService('server');
-    
+    // Create a service instance with server platform ID
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: PLATFORM_ID, useValue: 'server' }
+      ]
+    });
+
+    const ssrService = TestBed.inject(AuthService);
+
     expect(ssrService.currentUser).toBeNull();
     expect(ssrService.isAuthenticated).toBe(false);
   });

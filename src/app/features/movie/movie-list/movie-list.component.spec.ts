@@ -91,10 +91,17 @@ describe('MovieListComponent', () => {
     );
   });
 
-  it('should handle search', fakeAsync(() => {
+    it('should handle search', fakeAsync(() => {
     component.ngOnInit();
     
-    const event = { target: { value: 'test query' } } as { target: { value: string } };
+    // Create a mock input element with proper event structure
+    const mockInput = document.createElement('input');
+    mockInput.value = 'test query';
+    
+    const event = {
+      target: mockInput
+    } as unknown as Event;
+    
     component.onSearch(event);
     
     tick(300); // Wait for debounce
