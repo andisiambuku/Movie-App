@@ -2,9 +2,9 @@ name: Angular Movie App CI/CD
 
 on:
   push:
-    branches: [ dev, master ]
+    branches: [ development, master ]
   pull_request_target:
-    branches: [ dev, master ]
+    branches: [ development, master ]
 
 env:
   NODE_VERSION: '18'
