@@ -3,7 +3,7 @@ name: Angular Movie App CI/CD
 on:
   push:
     branches: [ dev, master ]
-  pull_request:
+  pull_request_target:
     branches: [ dev, master ]
 
 env:
